@@ -1,0 +1,97 @@
+// 회원 정보 관리 프로그램
+#include<stdio.h>
+#include<string.h>
+void collect();
+void manage();
+
+int main(void)
+{
+	int n = 0;
+
+	printf("**회원 정보 수집 및 관리 프로그램입니다.**\n");
+	printf("\t1. 수집 프로그램 실행\n");
+	printf("\t2. 관리 프로그램 실행\n\n");
+	printf("번호를 입력하세요 : ");
+	scanf_s("%d", &n);
+
+	if (n == 1)
+	{
+		printf("수집 프로그램을 실행합니다.\n");
+		collect();
+		printf("모두 입력하셨습니다. 프로그램을 종료합니다.\n");
+	}
+	else if (n == 2)
+	{
+		printf("관리 프로그램을 실행합니다.\n");
+		manage();
+		printf("프로그램을 종료합니다.\n");
+	}
+	else
+	{
+		printf("잘못 입력하셨습니다. 프로그램을 종료합니다.\n");
+	}
+
+	return 0;
+}
+
+void collect()
+{
+	char name[5][12] = {0};
+	int i = 0;
+	FILE* fp = fopen("program.txt", "at");
+	if (fp == NULL)
+	{
+		printf("파일을 만들지 못했습니다.\n");
+		return 1;
+	}
+
+	// 회원 정보 수집 //
+	printf("**이름을 5개 입력하세요**\n");
+	printf("  (ex) 홍길동 \n");
+	getchar();  // 버퍼에 남아있는 \n 소멸
+	
+	for (i = 0; i < 5; i++)
+	{
+
+		printf("%2d번째 이름 : ", i + 1);
+		scanf("%s", name[i]);
+
+		fprintf(fp, "%s\n", name[i]);
+	}
+
+	// 파일에 입력된 회원 정보 체크 //
+	fseek(fp, 0, SEEK_SET);
+	printf("\n파일에 입력된 정보입니다.\n");
+	for (i = 0; i < 5; i++)
+	{
+		printf("%s\n", name[i]);
+	}
+	fclose(fp);
+}
+
+void manage()
+{
+	int f_size = 0;
+	char name[][12] = { 0 };
+	FILE* fp = fopen("program.txt", "rt");
+	
+	if (fp == NULL)
+	{
+		printf("파일을 만들지 못했습니다.\n");
+		return 1;
+	}
+	
+	// 회원 정보 //
+	printf("\n**현재 회원 정보입니다.**\n");
+	while (EOF != fscanf(fp, "%s", name, sizeof(name)))
+	{
+		printf("%s\n", name);
+	}
+
+	// 회원 수 //
+	fseek(fp, 0, SEEK_END);		// 파일 끝으로 이동
+	f_size = ftell(fp);		// 파일의 현재 위치까지 파일 크기 구함
+	printf("회원 수 : %d명\n\n", f_size / 8);
+
+	fclose(fp);
+}
